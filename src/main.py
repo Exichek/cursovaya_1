@@ -10,7 +10,7 @@ def main(date_time: str = DEFAULT_DATE_TIME) -> None:
 
     logging.basicConfig(
         level=logging.INFO,
-        format=("%(asctime)s - %(name)s - " "%(levelname)s - %(message)s"),
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
     print(main_page(date_time))

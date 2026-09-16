@@ -1,12 +1,15 @@
 import json
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import Mock, call
 
 import pandas as pd
 import pytest
 import requests
 
 from src.utils import (
+    API_TIMEOUT,
+    CURRENCY_API_URL,
+    STOCK_API_URL,
     get_currency_rates,
     get_stock_prices,
     load_transactions,
@@ -179,7 +182,16 @@ def test_get_currency_rates_success(
         {"currency": "USD", "rate": 80.0},
         {"currency": "EUR", "rate": 100.0},
     ]
-    request_mock.assert_called_once()
+    request_mock.assert_called_once_with(
+        CURRENCY_API_URL,
+        headers={"apikey": "test-key"},
+        params={
+            "base_currency": "RUB",
+            "currencies": "USD,EUR",
+        },
+        timeout=API_TIMEOUT,
+    )
+    response.raise_for_status.assert_called_once_with()
 
 
 def test_get_currency_rates_partial_error(
@@ -251,7 +263,22 @@ def test_get_stock_prices_success(
         {"stock": "AAPL", "price": 150.12},
         {"stock": "MSFT", "price": 301.0},
     ]
-    assert request_mock.call_count == 2
+    assert request_mock.call_args_list == [
+        call(
+            STOCK_API_URL,
+            headers={"X-Finnhub-Token": "test-key"},
+            params={"symbol": "AAPL"},
+            timeout=API_TIMEOUT,
+        ),
+        call(
+            STOCK_API_URL,
+            headers={"X-Finnhub-Token": "test-key"},
+            params={"symbol": "MSFT"},
+            timeout=API_TIMEOUT,
+        ),
+    ]
+    first_response.raise_for_status.assert_called_once_with()
+    second_response.raise_for_status.assert_called_once_with()
 
 
 def test_get_stock_prices_errors(

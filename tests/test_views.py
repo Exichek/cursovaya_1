@@ -309,6 +309,56 @@ def test_main_page(
     stock_prices_mock.assert_called_once_with(["AAPL"])
 
 
+def test_main_page_contains_exactly_five_top_transactions(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Проверяет наличие ровно пяти крупнейших транзакций в ответе страницы."""
+
+    transactions = pd.DataFrame(
+        {
+            "Дата операции": [f"{day:02d}.01.2021 12:00:00" for day in range(1, 7)],
+            "Номер карты": ["*1234"] * 6,
+            "Статус": ["OK"] * 6,
+            "Сумма платежа": [
+                -100.0,
+                -600.0,
+                -300.0,
+                -500.0,
+                -200.0,
+                -400.0,
+            ],
+            "Категория": [f"Категория {number}" for number in range(1, 7)],
+            "Описание": [f"Операция {number}" for number in range(1, 7)],
+        }
+    )
+
+    monkeypatch.setattr(
+        "src.views.load_transactions",
+        Mock(return_value=transactions),
+    )
+    monkeypatch.setattr(
+        "src.views.load_user_settings",
+        Mock(
+            return_value={
+                "user_currencies": [],
+                "user_stocks": [],
+            }
+        ),
+    )
+
+    response = json.loads(main_page("2021-01-31 23:59:59"))
+    top_transactions = response["top_transactions"]
+
+    assert len(top_transactions) == 5
+    assert [transaction["amount"] for transaction in top_transactions] == [
+        600.0,
+        500.0,
+        400.0,
+        300.0,
+        200.0,
+    ]
+
+
 def test_main_page_invalid_date() -> None:
     """Проверяет ошибку при некорректном формате входящей даты."""
 

@@ -82,6 +82,10 @@ def test_spending_by_category(
         -200.0,
         -300.0,
     ]
+    assert result["Дата операции"].tolist() == [
+        "30.09.2021 00:00:00",
+        "31.12.2021 23:59:59",
+    ]
     assert report_path.is_file()
 
     saved_report = json.loads(report_path.read_text(encoding="utf-8"))

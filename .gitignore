@@ -1,0 +1,23 @@
+# Виртуальное окружение
+.venv/
+
+# Настройки PyCharm
+.idea/
+
+# Переменные окружения
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Кеши и отчеты тестирования
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Результаты сборки
+build/
+dist/
+*.egg-info/

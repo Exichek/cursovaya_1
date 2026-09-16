@@ -21,3 +21,6 @@ htmlcov/
 build/
 dist/
 *.egg-info/
+
+# Сформированные отчеты
+reports/

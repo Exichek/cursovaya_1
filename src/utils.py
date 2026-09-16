@@ -135,7 +135,6 @@ def load_user_settings(
         logger.exception("Не удалось загрузить настройки: %s", path)
         raise ValueError(f"Не удалось загрузить настройки: {path}") from error
 
-    # Добавляем вот сюда
     if not isinstance(settings, dict):
         raise ValueError("Настройки должны быть JSON-объектом")
 

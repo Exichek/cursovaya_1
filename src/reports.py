@@ -97,8 +97,6 @@ def spending_by_category(
 
     result = transactions.loc[date_mask & category_mask & status_mask & expense_mask].copy()
 
-    result["Дата операции"] = operation_dates.loc[result.index]
-
     logger.info(
         "Сформирован отчет по категории «%s»: %s транзакций",
         category,
